@@ -1,0 +1,1 @@
+projeto de blog em django feito em conjunto com curso.
