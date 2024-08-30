@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from utils.rands import slugfy_new
 from utils.images import resize_image
 from django_summernote.models import AbstractAttachment
+from django.urls import reverse
 
 import datetime
 
@@ -135,6 +136,10 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def get_absolute_url(self):
+        if not self.is_published:
+            return reverse('blog:post', args=(self.slug,))
 
     def save(self, *args, **kwargs):
         if not self.slug:

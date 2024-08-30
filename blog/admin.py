@@ -1,6 +1,7 @@
 from django.contrib import admin
 from blog.models import Tag, Category, Page, Post
 from django_summernote.admin import SummernoteModelAdmin
+from django.utils.safestring import mark_safe
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
@@ -44,11 +45,20 @@ class PostAdmin(SummernoteModelAdmin):
     list_filter = ['category', 'is_published']
     list_editable = ['is_published']  # Corrigir para lista ou tupla
     ordering = ['-id']  # Corrigir para lista ou tupla
-    readonly_fields = ['created_at', 'updated_at']  # Remover 'created_by' e 'updated_by' se não existirem
+    readonly_fields = ['created_at', 'updated_at', 'link']  # Remover 'created_by' e 'updated_by' se não existirem
     prepopulated_fields = {
         "slug": ('title',),
     }
     autocomplete_fields = ['tags', 'category']
+
+    def link(self, obj):
+        if not obj.pk:
+            return '-'
+        
+        url_do_post = obj.get_absolute_url()
+        safe_link = mark_safe(f'<a href="{url_do_post}" target="_blank">Ver post</a>')
+
+        return safe_link
 
     def save_model(self, request, obj, form, change):
         if change:
